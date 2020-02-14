@@ -1,5 +1,6 @@
 # cmip_work
-Use: 
+
+## Use: 
 
    Script to download and subset CMIP5 forcing data for ICAR
    Forcing data include 6 hour - 3-Dimensional data:
@@ -12,7 +13,7 @@ Use:
    Select model and GCM experiment (historical/rcp45/rcp85).
    Specify institute, GCM, experiment, ensemble memeber. 
  
- Processing:
+ ## Processing:
  
    * Sea Surface Temperature are regridded from rotated pole if necessary - fills from daily to 6 hourly - uses CDO commands.
    * Sea Surface Temperature are interpolated longitudnally to fill misising values over land.
@@ -21,7 +22,7 @@ Use:
    * Calculate model level heights or pressure levels depending on GCM. ICAR v2.0 can read either and compute the rest
    * Computes water vapor mixing ratio from specific humidity
  
- Note:
+ ## Note:
  
    * Currently set up for personal storage on NCAR's Cheyenne computer.
    * Writes out intermediate, spatially subsetted, 10 year files - stitches them back together
@@ -29,14 +30,14 @@ Use:
    * Will process entire historic, rcp45, and rcp85 periods depending on specification - hardcoded for now to make inputs smaller
    * Need `get_dataset` function from https://github.com/gutmann/cmip_ingest/tree/master/scripts/download 
     
-  TODO: 
+## TODO: 
     
    Add convective precipitation
    Add smarter way to destagger ACCESS and HADGEM - currently interpolates grid using xr.interp
 
 
 
-Example:
+## Example:
 
 Use cmip2icarForce.py to run subsetCMIP.py, which calls cmipFunctions.py
 
