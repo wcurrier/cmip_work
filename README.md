@@ -29,7 +29,7 @@
    * Latitude and longitude are hadcoded at the top of subsetCMIP.py - currently set up for western US.
    * Will process entire historic, rcp45, and rcp85 periods depending on specification - hardcoded for now to make inputs smaller
    * Need `get_dataset` function from https://github.com/gutmann/cmip_ingest/tree/master/scripts/download 
-   * Accesses CEDA website: ftp://ftp.ceda.ac.uk/badc/cmip6/data/CMIP5 need to register an acccount with them. Good idea to create a .netrc file with username and password.
+   * Accesses CEDA website: ftp://ftp.ceda.ac.uk/badc/ need to register an acccount with them. Good idea to create a .netrc file with username and password.
    * Using NCAR's Cheyenne computer? See which models already contain 6 hour model level data on Cheyenne with `exploreCMIPonCheyenne.ipynb`. Note that only historical data exists on Cheyenne. 
     
 ## TODO: 
