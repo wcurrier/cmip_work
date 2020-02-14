@@ -22,7 +22,7 @@
    * Calculate model level heights or pressure levels depending on GCM. ICAR v2.0 can read either and compute the rest
    * Computes water vapor mixing ratio from specific humidity
  
- ## Note:
+ ## Notes:
  
    * Currently set up for personal storage on NCAR's Cheyenne computer.
    * Writes out intermediate, spatially subsetted, 10 year files - stitches them back together
@@ -34,8 +34,6 @@
     
    Add convective precipitation
    Add smarter way to destagger ACCESS and HADGEM - currently interpolates grid using xr.interp
-
-
 
 ## Example:
 
