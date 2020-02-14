@@ -32,32 +32,18 @@ import os
 cdo = Cdo()
 
 
-def convertTos(outDir,inDir,chyColl):
-    if chyColl:
-        taDir=inDir+'ta/ta_*.nc'
-    else:
-        taDir=inDir+'ta_*.nc'
-    taFiles=sorted(glob.glob(taDir))
-    # Get a grid of rectilinear data - temperature should have orography or ps
-    dsTa=xr.open_dataset(taFiles[0]) # load subsetted temperature data
-    try:
-        dsTmp=dsTa['ps'][0,:,:].reset_coords()
-        dsTmp.to_netcdf(outDir+'tmp.nc') # write new tmp.nc file for gridding
-    except:
-        dsTmp=dsTa['orog']
-        dsTmp.to_netcdf(outDir+'tmp.nc')
-        
+def convertTos(outDir,inDir):
     # Check to see if files exist, if they don't let's regrid them using cdo commands    
     regrdFiles=glob.glob(outDir+'tos*regrd.nc')
     if len(regrdFiles) == 0 :
         # Get the grid dimensions, lat, and lon of the grid we want to transform to (tmp.nc)
         cdo.griddes("-f "+outDir+'tmp.nc'+" >"+outDir+"grid.txt")
         
-        fNames=sorted(glob.glob(outDir+'tos*.nc')) # get all base sea surface temperature variables
-        for files in fNames: # loop through files to regrid each sea surface temperature
-            fTmp=os.path.splitext(files)[0] # remove file extension
-            cdo.remapbil("grid.txt ", input=files, output=fTmp+"_regrd.nc", options="-f nc")
-            print("Created new TOS file "+fTmp+"_regrd.nc")
+        fNames=sorted(glob.glob(inDir+'tos*.nc')) # get all base sea surface temperature variables
+        for i , f in enumerate(fNames):
+            outputBase=os.path.splitext(fNames[i].split('/')[-1])[0] # removes path and file extension of each file
+            cdo.remapbil("grid.txt ", input=f, output=outDir+outputBase+"_regrd.nc", options="-f nc")
+            print("Created new TOS file "+outDir+outputBase+"_regrd.nc")
 
 def checkFiles(inDir,variable,time_period,chyColl):
 
@@ -236,7 +222,7 @@ def loadStaggeredVars(inDir,outDir,variable,Model,time_period,ensemble,lat_bnds,
     if chyColl:
         tFiles=sorted(glob.glob(inDir+'ta/ta*.nc'))
     else:
-        tFiles=sorted(glob.glob(inDir+'ta*.nc'))
+        tFiles=sorted(glob.glob(inDir+'ta*0.nc'))
     dsT=xr.open_dataset(tFiles[0])
     
     # Check to see if variables are staggered
@@ -299,6 +285,8 @@ def processTOS(inDir,outDir,variable,Model,time_period,ensemble,lat_bnds,lon_bnd
     
     # Load in data
     ds = xr.open_mfdataset(inDir+variable+'*_regrd.nc',combine='by_coords',engine='netcdf4',parallel=True) # load data
+    # Interpolate to fill in NaN values - do this longitudnally - dont use subset as it wont fill in land not between oceans/seas
+    ds['tos'] = ds['tos'].interpolate_na('lon',method='linear')
     # Subset Spaitally
     ds_sub = ds.sel(lat=slice(*lat_bnds), lon=slice(*lon_bnds))
     del ds
@@ -324,7 +312,7 @@ def searchChyColl(fName,Model,variable):
     # Model     = string of model name e.g 'bcc-csm-1'
     # variable  = string with model variable name, e.g. 'hus'
     
-    fList=[]
+    fList=[]                     # List of all files
     search = open(fName)
     for line in search:
         if Model+'/' in line:
