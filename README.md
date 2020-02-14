@@ -15,7 +15,7 @@
  
  ## Processing:
  
-   * Sea Surface Temperature are regridded from rotated pole if necessary - fills from daily to 6 hourly - uses CDO commands. See transformTOS.ipynb for example.
+   * Sea Surface Temperature are regridded from rotated pole if necessary - fills from daily to 6 hourly - uses CDO commands. See `transformTOS.ipynb` for example.
    * Sea Surface Temperature are interpolated longitudnally to fill misising values over land.
    * U,V data are regridded to to a non-staggered grid (ACCESS and HadGEM modesl)
    * Converts longitude from 0-360 to -180-180
