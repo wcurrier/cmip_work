@@ -11,7 +11,7 @@
    * Sea Surface Temperature (2D - Rotated Pole - daily -> 6 hour -> interpolated)
    * Orography (2D - fixed in time)
    Select model and GCM experiment (historical/rcp45/rcp85).
-   Specify institute, GCM, experiment, ensemble memeber. 
+   Specify institute, GCM, experiment, ensemble member. 
  
  ## Processing:
  
