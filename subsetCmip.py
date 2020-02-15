@@ -27,7 +27,7 @@ cdo = Cdo()
 
 
 #####################################################
-############## CHANGE THIS INFORMATION ############## 
+############## CHANGE THIS INFORMATION ##############
 #####################################################
 
 # ins         = 'NCAR'        # BCC, NCAR
@@ -46,7 +46,7 @@ cdo = Cdo()
 # endDates   = pd.to_datetime(['1960-01-01 00:00:00','1970-01-01 00:00:00','1980-01-01 00:00:00','1990-01-01 00:00:00','2000-01-01 00:00:00','2006-01-01 00:00:00'],                       format='%Y-%m-%d %H:%M:%S')
 
 #####################################################
-############## NO NEED TO CHANGE BELOW ############## 
+############## NO NEED TO CHANGE BELOW ##############
 #####################################################
 
 def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="historical"):
@@ -63,11 +63,11 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         end_date   = "21000101" # Used for downloading data
         startDates = pd.to_datetime(['2006-01-01 00:00:00','2010-01-01 06:00:00','2020-01-01 06:00:00','2030-01-01 06:00:00','2040-01-01 06:00:00','2050-01-01 06:00:00','2060-01-01 06:00:00','2070-01-01 06:00:00','2080-01-01 06:00:00','2090-01-01 06:00:00'],format='%Y-%m-%d %H:%M:%S')
         endDates   = pd.to_datetime(['2010-01-01 00:00:00','2020-01-01 00:00:00','2030-01-01 00:00:00','2040-01-01 00:00:00','2050-01-01 00:00:00','2060-01-01 00:00:00','2070-01-01 00:00:00','2080-01-01 00:00:00','2090-01-01 00:00:00','2100-01-01 00:00:00'],format='%Y-%m-%d %H:%M:%S')
-    
-    
+
+
     workingDir=os.getcwd()
     workingDir=workingDir+'/'
-    
+
     # Check if we've already created a directory for subsetted/processed data
     outDir = '/glade/scratch/currierw/'+model+'/'+scen+'/' # must have back slash
     if os.path.isdir(outDir) == False : # Make output directory if it doesn't exist
@@ -101,7 +101,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     # cmipFunctions.checkFiles(inDir,'tos',scen,chyColl)
 
     ####### OROGRPAHY
-    
+
     # Try opening a file that already exists on cheyenne
     orogDir='/glade/collections/cmip/cmip5/output1/'+ins+'/'+model+'/'+scen+'/fx/atmos/fx/r0i0p0/latest/orog/*.nc'
     try:
@@ -114,10 +114,10 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
             orogDS=xr.open_mfdataset(outDir+'orog_fx*.nc',combine='by_coords')
         else:
             orogDS=xr.open_mfdataset(orogFile[0],combine='by_coords')
-            
+
     orogDsSub=orogDS.sel(lat=slice(*lat_bnds), lon=slice(*lon_bnds))
     orogDS.to_netcdf(outDir+'tmp.nc') # to make it easier just write out this for regridding SST
-                
+
     ####### TEMPERATURE
     # Load in Temperature Data First
     taFiles=glob.glob(outDir+'ta*.nc') # Get list of files already subsetted
@@ -125,13 +125,13 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         os.chdir(outDir)
         get_dataset.download(model=model,var_name="ta",domain="atmos",interval="6hr", run=ensemble,                                                            scenario=scen, start_time=start_date, end_time=end_date)
         cmipFunctions.loadNonStaggeredVars(outDir,outDir,'ta',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
-    
+
     taFilesSub=glob.glob(outDir+'ta*subset.nc') # Get list of files already subsetted
     if len(taFilesSub) == 0:              # If list of files haven't been subsetted, subset them
         cmipFunctions.loadNonStaggeredVars(inDir,outDir,'ta',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
     else:
         print("Subsetted atmospheric temperature data already existed")
-              
+
     ####### SEA SURFACE TEMEPRATURE
 
     # daily, historical, rcp45, rcp85, sea surface temperature data doesn't exist on cheyenne
@@ -161,7 +161,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         cmipFunctions.processTOS(outDir,outDir,'tos',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates)
     else:
         print("Subsetted sea surface temperature data already existed")
-              
+
     ###### Humidity Data
     husFiles=glob.glob(outDir+'hus*.nc')
     if chyColl == False and len(husFiles)==0:
@@ -169,7 +169,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         get_dataset.download(model=model,var_name="hus",domain="atmos",interval="6hr", run=ensemble,\
                              scenario=scen, start_time=start_date, end_time=end_date)
         cmipFunctions.loadNonStaggeredVars(outDir,outDir,'hus',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
-    
+
     husFilesSub=glob.glob(outDir+'hus*subset.nc')
     if len(husFilesSub) == 0:
         cmipFunctions.loadNonStaggeredVars(inDir,outDir,'hus',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
@@ -188,7 +188,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         cmipFunctions.loadStaggeredVars(inDir,outDir,'ua',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
     else:
         print("Subsetted U wind speed data already existed")
-              
+
     ###### V Data
     vFiles=glob.glob(outDir+'va*.nc')
     if chyColl == False and len (vFiles)==0:
@@ -208,7 +208,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     if chyColl == False and len(psFiles)==0:
         os.chdir(outDir)
         get_dataset.download(model=model,var_name="ps",domain="atmos",interval="6hr", run=ensemble,\
-                             scenario=scen, start_time=start_date, end_time=end_date) 
+                             scenario=scen, start_time=start_date, end_time=end_date)
         cmipFunctions.loadNonStaggeredVars(outDir,outDir,'ps',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
 
     psFilesSub=glob.glob(outDir+'ps*subset.nc')
@@ -277,16 +277,16 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
                      coords={"lev":tads_sub.lev,"lat":tads_sub.lat,"lon":tads_sub.lon})
         ds_Z['Z'].attrs['standard_name'] = '3D model level heights'
         ds_Z['Z'].attrs['long_name'] = '3D Model Level Heights'
-        ds_Z['Z'].attrs['units'] = 'm' 
-        ds_Z['Z'].attrs['Processing Note'] = 'Calculated using temperature lev coordinates, b values, and orogoraphy varaibles. Z = lev + b * orog' 
+        ds_Z['Z'].attrs['units'] = 'm'
+        ds_Z['Z'].attrs['Processing Note'] = 'Calculated using temperature lev coordinates, b values, and orogoraphy varaibles. Z = lev + b * orog'
         print('Loaded the model level elevations')
     if pressure:
         ds_P = xr.Dataset({"P":(("time","lev","lat","lon"),P)},
                      coords={"time":dsT.time,"lev":P.lev,"lat":P.lat,"lon":P.lon})
-        ds_P['P'].attrs['standard_name'] = 'pressure' 
-        ds_P['P'].attrs['long_name'] = 'pressure' 
-        ds_P['P'].attrs['comment'] = 'calculated from subsetted 6 hr temperature data file: a*p0+b*Ps' 
-        ds_P['P'].attrs['units'] = 'Pa' 
+        ds_P['P'].attrs['standard_name'] = 'pressure'
+        ds_P['P'].attrs['long_name'] = 'pressure'
+        ds_P['P'].attrs['comment'] = 'calculated from subsetted 6 hr temperature data file: a*p0+b*Ps'
+        ds_P['P'].attrs['units'] = 'Pa'
         print('Loaded the 4D pressure data')
 
 
@@ -300,7 +300,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     ds_SST  = xr.Dataset({"SST":(("time","lat","lon"),dsTOS.tos)},
                      coords={"time":dsTOS.time,"lat":dsT.lat,"lon":dsT.lon})
     ds_SST['SST'].attrs = dsTOS['tos'].attrs
-    ds_SST['SST'].attrs['Processing Note'] = 'Daily data forward filled to 6H data' 
+    ds_SST['SST'].attrs['Processing Note'] = 'Daily data forward filled to 6H data'
     print('Loaded the sea surface temperature data')
 
     ######## Precipitation [kg m-2 s-1]
@@ -331,7 +331,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     ds_Qv['Qv'].attrs['associated_files'] = dsHus['hus'].attrs['associated_files']
     ds_Qv['Qv'].attrs['Processing Note'] = 'Calculated from specific humidity (q) data Qv = q/1-q'
     print('Loaded the water vapor mixing ratio data')
-              
+
     ######## North South Wind Speeds [m s-1]
     ds_v = xr.Dataset({"V":(("time","lev","lat","lon"),dsV.va)},
                       coords={"time":dsV.time,"lev":dsT.lev,"lat":dsV.lat,"lon":dsV.lon})
@@ -353,7 +353,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     elif pressure:
         ds = xr.merge([dsOrog, ds_P, ds_Ps, ds_SST, ds_T, ds_Qv, ds_v, ds_u])
     print('Merged dataset - fixing longitudes: 0-359 to -180-179')
-              
+
     # Convert longitude coordinates from 0-359 to -180-179
     ds['lon']=(((ds['lon'] + 180) % 360) - 180)
     ds['lon'].attrs['units']         = 'degrees_east'
@@ -374,7 +374,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     if os.path.isdir(outDir+'forcing/') == False:
         print("Writing new directory: "+outDir+'forcing/')
         os.mkdir(outDir+'forcing/')
-        
+
     allFiles=glob.glob(outDir+'forcing/'+model+'_6hrLev_'+ scen +'_'+ ensemble +'*' +'_subset.nc')
     if len(allFiles) == 0:
         print("Writing out merged files to 10 year periods")

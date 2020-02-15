@@ -15,7 +15,7 @@ DESCRIPTION
     U,V data are regridded to to a non-staggered grid (ACCESS and HadGEM)
     Converts longitude from 0-360 to -180-180
     Calculate model level heights or pressure levels depending on staggered
-    Computes water vapor micing ratio from specific humidity
+    Computes water vapor mixing ratio from specific humidity
 
     TODO: Add convective precipitation
 
