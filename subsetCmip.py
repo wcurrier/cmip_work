@@ -102,15 +102,17 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
 
     ####### OROGRPAHY
 
-    # Try opening a file that already exists on cheyenne
     orogDir='/glade/collections/cmip/cmip5/output1/'+ins+'/'+model+'/'+scen+'/fx/atmos/fx/r0i0p0/latest/orog/*.nc'
-    try:
+    try:    # Try opening a file that already exists on cheyenne
         orogDS=xr.open_mfdataset(orogDir,combine='by_coords')
     except:
         os.chdir(outDir)
-        orogFile=sorted(glob.glob(outDir+'orog*.nc')) # Get list of files already subsetted
+        orogFile=sorted(glob.glob(outDir+'orog*.nc')) # Get list of files already been downloaded
         if len(orogFile) == 0:              # If files hasn't been downloaded - download them
-            get_dataset.download(model=model, run='r0i0p0', scenario=scen,start_time=start_date, end_time=end_date, var_name="orog", domain = "atmos", interval="fx")
+            if model ==  'bcc-csm1-1-m': # Orography isn't stored for bcc-csm1-1-m in historical - uses /piControl/fx/atmos/fx/r0i0p0/latest/orog/
+                get_dataset.download(model='bcc-csm1-1-m', run='r0i0p0', scenario='piControl',start_time=start_date, end_time=end_date, var_name="orog", domain = "atmos", interval="fx")
+            else:
+                get_dataset.download(model=model, run='r0i0p0', scenario=scen,start_time=start_date, end_time=end_date, var_name="orog", domain = "atmos", interval="fx")
             orogDS=xr.open_mfdataset(outDir+'orog_fx*.nc',combine='by_coords')
         else:
             orogDS=xr.open_mfdataset(orogFile[0],combine='by_coords')
@@ -198,7 +200,9 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
         cmipFunctions.loadStaggeredVars(outDir,outDir,'va',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
 
     vFilesSub=glob.glob(outDir+'va*subset.nc')
-    if len(vFilesSub) == 0:
+    if len(vFiles) > 0 and len(vFilesSub) == 0: # if files were already downloaded - use them
+        cmipFunctions.loadStaggeredVars(outDir,outDir,'va',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
+    elif len(vFilesSub) == 0:
         cmipFunctions.loadStaggeredVars(inDir,outDir,'va',model,scen,ensemble,lat_bnds,lon_bnds,startDates,endDates,chyColl)
     else:
         print("Subsetted V wind speed data already existed")
