@@ -85,6 +85,7 @@ def process(mip="cmip5",ins='NCAR',model="CCSM4",ensemble="r6i1p1",scen="histori
     if len(fDirs)==0:
         print('Not on Cheyenne: Need to download all variables')
         chyColl     = False         # Data exist in cheyenne collection already - see list
+        inDir       = outDir
     else:
         print('Data are already on Cheyenne! Yay!')
         chyColl     = True         # Data exist in cheyenne collection already - see list

@@ -222,7 +222,11 @@ def loadStaggeredVars(inDir,outDir,variable,Model,time_period,ensemble,lat_bnds,
     if chyColl:
         tFiles=sorted(glob.glob(inDir+'ta/ta*.nc'))
     else:
-        tFiles=sorted(glob.glob(inDir+'ta*0.nc'))
+        tFiles=sorted(glob.glob(inDir+'ta*.nc'))
+        tFilesSub=sorted(glob.glob(inDir+'ta*subset.nc'))
+        if len(tFilesSub)>0:
+            for f in tFilesSub:
+                tFiles.remove(f)
     dsT=xr.open_dataset(tFiles[0])
 
     # Check to see if variables are staggered
